@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.yedam.board.domain.BoardVO;
+import com.yedam.board.domain.Criteria;
 import com.yedam.board.persistence.BoardMapper;
 
 import lombok.Setter;
@@ -47,10 +48,22 @@ public class BoardServiceImpl implements BoardService {
 		return cnt == 1 ? true : false;
 	}
 
+	/*
+	 * @Override public List<BoardVO> getList() { log.info("서비스구현 ..... 목록"); return
+	 * boardMapper.getList(); }
+	 */
+
 	@Override
-	public List<BoardVO> getList() {
-		log.info("서비스구현 ..... 목록");
-		return boardMapper.getList();
+	public List<BoardVO> getList(Criteria cri) {
+		// TODO Auto-generated method stub
+		//return boardMapper.getList(cri);
+		return boardMapper.getListWithPaging(cri);
+	}
+
+	@Override
+	public int getTotalCount(Criteria cri) {
+		// TODO Auto-generated method stub
+		return boardMapper.getTotalCount(cri);
 	}
 
 }

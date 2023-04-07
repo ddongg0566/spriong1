@@ -3,6 +3,7 @@ package com.yedam.board.service;
 import java.util.List;
 
 import com.yedam.board.domain.BoardVO;
+import com.yedam.board.domain.Criteria;
 
 public interface BoardService {
 
@@ -14,6 +15,10 @@ public interface BoardService {
 
 	public boolean remove(Long bno);
 
-	public List<BoardVO> getList();
-
+//	public List<BoardVO> getList();
+	
+	public List<BoardVO> getList(Criteria cri);
+	
+	public int getTotalCount(Criteria cri);
+	
 }

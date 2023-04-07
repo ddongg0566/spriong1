@@ -7,6 +7,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.yedam.board.domain.BoardVO;
+import com.yedam.board.domain.Criteria;
 
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
@@ -24,14 +25,19 @@ public class ServiceTest {
 		BoardVO board = new BoardVO();
 		board.setTitle("새글등록");
 		board.setContent("글본문입니다");
-		board.setWriter("user04");
+		board.setWriter("user02");
 		log.info("등록전: " +board);
 		service.register(board);
 		log.info("등록후: " +board);
 	}
 	@Test
-	public void testGetList() {
-		service.getList().forEach(board ->log.info(board) );
+	public void listTest() {
+		
+		Criteria cri = new Criteria(3,10);
+		cri.setType("TCW");
+		cri.setKeyword("user02");
+		//cri.setPageNum(2);;
+		service.getList(cri).forEach(board ->log.info(board) );
 		
 	}
 	@Test
