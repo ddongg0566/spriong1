@@ -81,6 +81,9 @@
 					</li>
 				</ul>
 			</div>
+			<div class="panel-footer">
+			
+			</div>
 		</div>
 	</div>
 </div>
@@ -146,14 +149,20 @@
 		var bnoValue="${board.bno}";
 		var replyUl= $('.chat');
 		
-		showList("1");
+		showList(-1);
 		function showList(page){
 			
 
 			replyService.getList({
 				bno : bnoValue,
-				page : page
-			}, function(list) {
+				page : page || 1
+			}, function(replyCnt, list) {
+				// 전체페이지의 끝부분 계산.
+				if(page == -1){
+					pageNum = Math.ceil(replyCnt / 10.0); //15건 -->2페이지.
+					showList(pageNum);
+					return; //페이지의값을 -1로 지정하면 마지막페이지/
+				}
 				if(list == null || list.length ==0){
 					replyUl.html("");
 					return;
@@ -168,6 +177,8 @@
 					
 				}
 				replyUl.html(str);
+				//페이지 정보
+				showReplyPage(replyCnt);
 				
 			}, function(result) {
 				console.log(result);
@@ -203,6 +214,12 @@
 				modal.find('input').val('');
 				modal.modal('hide');
 			})
+			replyService.add(reply,function(result){
+				alert('resutl:'+ result);
+				modal.find('input').val('');
+				modal.modal('hide');
+				showList(-1);
+			})
 		})
 		
 		//특정댓글 클릭하면 수정, 삭제 modal 보여주기
@@ -233,7 +250,7 @@
 				modal.modal('hide');
 				
 				
-				showList("1");
+				showList(pageNum);
 			})
 		
 		})
@@ -246,8 +263,45 @@
 			modal.modal('hide');
 			
 			
-			showList("1");
+			showList(pageNum);
 			})
+		})
+		//페이징 정보
+		var pageNum=1;
+		var replyPageFooter = $('.panel-footer');
+		function showReplyPage(replyCnt){
+			var endNum = Math.ceil(pageNum / 10.0)* 10;
+			var startNum = endNum - 9;
+			var prev = startNum !=1 ;
+			var next = false;
+			
+			if (endNum * 10 >replyCnt){
+				endNum = Math.ceil(replyCnt / 10.0);//실제 마지막 페이지.
+			}
+			
+			if(endNum *10 <replyCnt){
+				next =true;
+			}
+			var str ="<ul class='pagination pull-right'>";
+			if(prev) {
+				str += "<li class ='page-item'><a class ='page-link' href='" +(startNum-1)+"'>Previous</a></li>";
+			}
+			for(var i = startNum; i <= endNum; i++){
+				var active = pageNum == i ? 'active' : '';
+				str += "<li class='page-item " + active + "'><a class='page-link' href='"+ i +"'>"+ i +"</a></li>";
+			}
+			if(next){
+				str += "<li class ='page-item'><a class ='page-link' href='" +(endNum+1)+"'>Next</a></li>";
+			}
+		
+			replyPageFooter.html(str);
+		}
+			
+		replyPageFooter.on('click','li a', function (e){
+			e.preventDefault();
+			var targetPageNum = $(this).attr('href')
+			pageNum = targetPageNum;
+			showList(pageNum);
 		})
 	})
 </script>
